@@ -1,0 +1,26 @@
+{
+  "name": "WALLSYNC",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pesto-students/wallsync-backend-team1-harsh.git"
+  },
+  "keywords": [],
+  "author": "Naba Kr Missong & Ayan Khan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pesto-students/wallsync-backend-team1-harsh/issues"
+  },
+  "homepage": "https://github.com/pesto-students/wallsync-backend-team1-harsh#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "mongoose": "^6.9.1"
+  }
+}
