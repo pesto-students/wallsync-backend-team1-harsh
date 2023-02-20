@@ -7,32 +7,36 @@ const addContribution = (req, res) => {
 		.then((gd) => {
 			User.findOne({ firstName: req.params.firstName })
 				.then((user) => {
-					const newCont = new Contribution(req.body);
+					if (gd.groupMembers.includes(user.firstName)) {
+						const newCont = new Contribution(req.body);
 
-					newCont
-						.save()
-						.then((data) => {
-							gd.contributions.push({
-								name: data.contributedBy,
-								desc: data.description,
-								share: data.amount,
+						newCont
+							.save()
+							.then((data) => {
+								gd.contributions.push({
+									name: data.contributedBy,
+									desc: data.description,
+									share: data.amount,
+								});
+								gd.groupTotal += data.amount;
+								gd.save();
+								res
+									.status(202)
+									.json({ contri: gd.contributions, total: gd.groupTotal });
+							})
+							.catch((err) => {
+								res.json("error add contribution");
 							});
-							gd.groupTotal += data.amount;
-							gd.save();
-							res
-								.status(201)
-								.json({ contri: gd.contributions, total: gd.groupTotal });
-						})
-						.catch((err) => {
-							res.json("error1");
-						});
+					} else {
+						res.json({ message: "add user to the group first" });
+					}
 				})
 				.catch((err) => {
-					res.json("error2");
+					res.json("user not found");
 				});
 		})
 		.catch((err) => {
-			res.json("error3");
+			res.json("group not found");
 		});
 };
 

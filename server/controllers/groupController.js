@@ -11,7 +11,7 @@ const createGroup = (req, res) => {
 	newGroup
 		.save()
 		.then((groupData) => {
-			res.json(groupData);
+			res.status(201).json(groupData);
 		})
 		.catch((error) => {
 			res.json(error);
@@ -38,7 +38,9 @@ const addUserToGroup = (req, res) => {
 						} else {
 							groupDeets.groupMembers.push(user.firstName);
 							groupDeets.save();
-							res.json({ message: "added", members: groupDeets.groupMembers });
+							res
+								.status(202)
+								.json({ message: "added", members: groupDeets.groupMembers });
 						}
 					} else {
 						res.json({ message: `send an invite to ${req.body.email}` });
@@ -59,7 +61,7 @@ const addPercentageArray = (req, res) => {
 				gd.percentageArray.push({ name: i.name, percent: i.percent });
 			});
 			gd.save();
-			res.json(gd.percentageArray);
+			res.status(202).json(gd.percentageArray);
 		})
 		.catch((err) => {
 			res.json(err);
@@ -98,7 +100,6 @@ const settle = (req, res) => {
 				unequal(updatedResult, gd.percentageArray)
 			);
 
-			console.log(unequalSettle);
 			if (req.params.split === "equal") {
 				gd.memberBalances = equalSplit(updatedResult);
 
@@ -120,10 +121,28 @@ const settle = (req, res) => {
 			res.json("error calculating");
 		});
 };
+const deleteGroup = (req, res) => {
+	Group.findOneAndDelete({ groupName: req.params.groupName })
+		.then(() => {
+			res.json({ message: "group deleted" });
+		})
+		.catch((err) => {
+			res.json({ messsage: "unable to delete group" });
+		});
+};
+const editGroup = (req, res) => {
+	Group.findOneAndUpdate({ groupName: req.params.groupName }, req.body, {
+		new: true,
+	}).then((ug) => {
+		res.json({ message: "updated", update: ug });
+	});
+};
 module.exports = {
 	createGroup,
 	getGroup,
 	addUserToGroup,
 	addPercentageArray,
 	settle,
+	deleteGroup,
+	editGroup,
 };

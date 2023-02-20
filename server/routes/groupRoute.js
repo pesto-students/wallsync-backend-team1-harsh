@@ -7,5 +7,6 @@ router.get("/:groupName", groupController.getGroup);
 router.post("/:groupName/adduser", groupController.addUserToGroup);
 router.post("/:groupName/addPercentage", groupController.addPercentageArray);
 router.get("/:groupName/settle/:split", groupController.settle);
-
+router.delete("/:groupName/delete", groupController.deleteGroup);
+router.put("/:groupName/edit", groupController.editGroup);
 module.exports = router;
