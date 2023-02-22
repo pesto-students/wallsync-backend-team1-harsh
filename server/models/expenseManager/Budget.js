@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const Budget = new Schema(
+const BudgetSchema = new Schema(
 	{
 		user: { type: Schema.Types.ObjectId, ref: "Users" },
 		income: { type: Number },
@@ -14,5 +14,5 @@ const Budget = new Schema(
 	{ timestamps: true }
 );
 
-const ExpenseMan = mongoose.model("Budgets", Budget);
-module.exports = ExpenseMan;
+const Budget = mongoose.model("Budgets", BudgetSchema);
+module.exports = Budget;

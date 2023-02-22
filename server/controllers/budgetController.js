@@ -1,4 +1,4 @@
-const Transaction = require("../models/expenseManager/Budget");
+const Transaction = require("../models/expenseManager/Transaction");
 const Budget = require("../models/expenseManager/Budget");
 const User = require("../models/user/User");
 
@@ -11,35 +11,35 @@ const addBudget = (req, res) => {
 			income: req.body.income,
 			limit: req.body.limit,
 		});
-		budget.save().then((ed) => {
-			res.json(ed);
+		budget.save().then((bd) => {
+			res.json(bd);
 		});
 	});
 };
 
 // const addTransaction = (req, res) => {
 // 	// const user = req.params.user;
-// 	Budget.findOne({ user: req.params.user }).then((ed) => {
+// 	Budget.findOne({ user: req.params.user }).then((bd) => {
 // 		const transaction = new Transaction(req.body);
 // 		transaction
 // 			.save()
 // 			.then((data) => {
-// 				ed.expensesArray.push(data);
+// 				bd.expensesArray.push(data);
 // 				let total = 0;
-// 				ed.expensesArray.map((item) => {
+// 				bd.expensesArray.map((item) => {
 // 					total += item.amount;
 // 				});
-// 				ed.total = total;
+// 				bd.total = total;
 
 // 				let savings = 0;
-// 				savings = ed.income - ed.total;
-// 				ed.savings = savings;
-// 				ed.save();
+// 				savings = bd.income - bd.total;
+// 				bd.savings = savings;
+// 				bd.save();
 
 // 				res.json({
-// 					expense: ed.expensesArray,
-// 					total: ed.total,
-// 					savings: ed.savings,
+// 					expense: bd.expensesArray,
+// 					total: bd.total,
+// 					savings: bd.savings,
 // 				});
 // 			})
 // 			.catch((err) => {
@@ -58,38 +58,48 @@ const addTransaction = (req, res) => {
 		});
 		newExpense.save().then((data) => {
 			bd.expensesArray.push(data);
+			let total = 0;
+			bd.expensesArray.map((i) => {
+				total += i.amount;
+			});
+			bd.total = total;
 
-			console.log(bd.expensesArray);
-
-			res.json(data);
+			let savings = bd.income - bd.total;
+			bd.savings = savings;
+			bd.save();
+			res.json({
+				expenses: bd.expensesArray,
+				total: bd.total,
+				savings: bd.savings,
+			});
 		});
 	});
 };
 
 const getSummary = (req, res) => {
-	// 	const user = req.params.user;
-	// 	Budget.findOne({ user }).then((ed) => {
-	// 		res.json(ed);
-	// 	});
+	const user = req.params.user;
+	Budget.findOne({ user }).then((bd) => {
+		res.json(bd);
+	});
 };
 
 const filterBudget = (req, res) => {
-	// 	const type = req.params.type;
-	// 	Budget.findOne({ user: req.params.user }).then((ed) => {
-	// 		let datearr = [];
-	// 		let resArr = [];
-	// 		if (type === "month") {
-	// 			ed.expensesArray.map((i) => {
-	// 				datearr.push(i.date.toString().substr(4, 6));
-	// 			});
-	// 			ed.expensesArray.map((i) => {
-	// 				if (i.date.toString().substr(4, 6) === "Feb 18") {
-	// 					resArr.push(i);
-	// 				}
-	// 			});
-	// 		}
-	// 		res.json(resArr);
-	// 	});
+	const type = req.params.type;
+	Budget.findOne({ user: req.params.user }).then((bd) => {
+		let datearr = [];
+		let resArr = [];
+		if (type === "month") {
+			bd.expensesArray.map((i) => {
+				datearr.push(i.date.toString().substr(4, 6));
+			});
+			bd.expensesArray.map((i) => {
+				if (i.date.toString().substr(4, 6) === "Feb 18") {
+					resArr.push(i);
+				}
+			});
+		}
+		res.json(resArr);
+	});
 };
 module.exports = {
 	addBudget,
