@@ -9,6 +9,7 @@ const userRoute = require("./routes/userRoute");
 const groupRoute = require("./routes/groupRoute");
 const contributionRoute = require("./routes/contributionRoute");
 const budgetRoute = require("./routes/budgetRoute");
+const repaymentRoute = require("./routes/repaymentRoute");
 const app = express();
 const PORT = process.env.PORT || 8008;
 connectDB();
@@ -19,7 +20,7 @@ app.use("/api", userRoute);
 app.use("/api", groupRoute);
 app.use("/api", contributionRoute);
 app.use("/api", budgetRoute);
-
+app.use("/api", repaymentRoute);
 app.listen(PORT, () => {
 	console.log("WallSync is running on port " + PORT);
 });
