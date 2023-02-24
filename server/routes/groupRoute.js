@@ -2,11 +2,14 @@ const express = require("express");
 const groupController = require("../controllers/groupController");
 const router = express.Router();
 
-router.post("/createGroup", groupController.createGroup);
-router.get("/:groupName", groupController.getGroup);
-router.post("/:groupName/adduser", groupController.addUserToGroup);
-router.post("/:groupName/addPercentage", groupController.addPercentageArray);
-router.get("/:groupName/settle/:split", groupController.settle);
-router.delete("/:groupName/delete", groupController.deleteGroup);
-router.put("/:groupName/edit", groupController.editGroup);
+router.post("/:id/createGroup", groupController.createGroup);
+router.get("/:id/:groupName", groupController.getGroup);
+router.post("/:id/:groupName/adduser", groupController.addUserToGroup);
+router.post(
+	"/:id/:groupName/addPercentage",
+	groupController.addPercentageArray
+);
+router.get("/:id/:groupName/settle/:split", groupController.settle);
+router.delete("/:id/:groupName/delete", groupController.deleteGroup);
+router.put("/:id/:groupName/edit", groupController.editGroup);
 module.exports = router;

@@ -60,7 +60,35 @@ const login = async (req, res) => {
 	}
 };
 
+// const getAllGroups = (req, res) => {
+// 	User.findById(req.params.id)
+// 		.then((ud) => {
+// 			const groupId = ud.groups.map((i) => i);
+// 			let res = [];
+// 			Group.findById(req.params.groupId)
+// 				.then((data) => {
+// 					res.push(data);
+// 					res.json(res);
+// 				})
+// 				.catch((err) => {
+// 					res.json("Error fetching group data");
+// 				});
+// 		})
+// 		.catch((err) => {
+// 			res.json("error fetching groups");
+// 		});
+// };
+const getAllGroups = async (req, res) => {
+	try {
+		const user = await User.findById(req.params.id).populate("groups");
+		const groups = user.groups;
+		res.json(groups);
+	} catch (err) {
+		res.json("error fetching groups");
+	}
+};
 module.exports = {
 	register,
 	login,
+	getAllGroups,
 };

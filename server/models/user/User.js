@@ -11,6 +11,7 @@ const userSchema = new Schema(
 		profilePicture: { type: String, default: "" },
 		isAdmin: { type: Boolean, default: false },
 		password: { type: String, required: true },
+		groups: { type: [Schema.Types.ObjectId], ref: "Groups" },
 	},
 	{ timestamps: true }
 );
