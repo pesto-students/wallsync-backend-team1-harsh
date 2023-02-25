@@ -14,6 +14,7 @@ const addContribution = (req, res) => {
 							.save()
 							.then((data) => {
 								gd.contributions.push({
+									id: data._id,
 									name: data.contributedBy,
 									desc: data.description,
 									share: data.amount,
