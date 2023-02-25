@@ -5,49 +5,18 @@ const User = require("../models/user/User");
 const addBudget = (req, res) => {
 	const id = req.params.id;
 	User.findById(id).then((ud) => {
-		console.log(ud);
 		const budget = new Budget({
 			user: id,
 			income: req.body.income,
 			limit: req.body.limit,
 		});
 		budget.save().then((bd) => {
+			ud.budgets.push(bd);
+			ud.save();
 			res.json(bd);
 		});
 	});
 };
-
-// const addTransaction = (req, res) => {
-// 	// const user = req.params.user;
-// 	Budget.findOne({ user: req.params.user }).then((bd) => {
-// 		const transaction = new Transaction(req.body);
-// 		transaction
-// 			.save()
-// 			.then((data) => {
-// 				bd.expensesArray.push(data);
-// 				let total = 0;
-// 				bd.expensesArray.map((item) => {
-// 					total += item.amount;
-// 				});
-// 				bd.total = total;
-
-// 				let savings = 0;
-// 				savings = bd.income - bd.total;
-// 				bd.savings = savings;
-// 				bd.save();
-
-// 				res.json({
-// 					expense: bd.expensesArray,
-// 					total: bd.total,
-// 					savings: bd.savings,
-// 				});
-// 			})
-// 			.catch((err) => {
-// 				res.json("Error adding transaction");
-// 				// console.log(err)
-// 			});
-// 	});
-// };
 
 const addTransaction = (req, res) => {
 	Budget.findOne({ user: req.params.user }).then((bd) => {
@@ -76,13 +45,6 @@ const addTransaction = (req, res) => {
 	});
 };
 
-const getSummary = (req, res) => {
-	const user = req.params.user;
-	Budget.findOne({ user }).then((bd) => {
-		res.json(bd);
-	});
-};
-
 const filterBudget = (req, res) => {
 	const type = req.params.type;
 	Budget.findOne({ user: req.params.user }).then((bd) => {
@@ -104,6 +66,5 @@ const filterBudget = (req, res) => {
 module.exports = {
 	addBudget,
 	addTransaction,
-	getSummary,
 	filterBudget,
 };

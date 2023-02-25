@@ -9,27 +9,30 @@ const addContribution = (req, res) => {
 				.then((user) => {
 					if (gd.groupMembers.includes(user.firstName)) {
 						const newCont = new Contribution(req.body);
-
-						newCont
-							.save()
-							.then((data) => {
-								gd.contributions.push({
-									id: data._id,
-									name: data.contributedBy,
-									desc: data.description,
-									share: data.amount,
+						if (gd.groupMembers.includes(req.body.name)) {
+							newCont
+								.save()
+								.then((data) => {
+									gd.contributions.push({
+										id: data._id,
+										name: data.contributedBy,
+										desc: data.description,
+										share: data.amount,
+									});
+									gd.groupTotal += data.amount;
+									gd.save();
+									res
+										.status(202)
+										.json({ contri: gd.contributions, total: gd.groupTotal });
+								})
+								.catch((err) => {
+									res.json("error add contribution");
 								});
-								gd.groupTotal += data.amount;
-								gd.save();
-								res
-									.status(202)
-									.json({ contri: gd.contributions, total: gd.groupTotal });
-							})
-							.catch((err) => {
-								res.json("error add contribution");
-							});
+						} else {
+							res.json("add user to group first");
+						}
 					} else {
-						res.json({ message: "add user to the group first" });
+						res.json({ message: "join the group first" });
 					}
 				})
 				.catch((err) => {

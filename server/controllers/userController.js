@@ -87,8 +87,28 @@ const getAllGroups = async (req, res) => {
 		res.json("error fetching groups");
 	}
 };
+const getAllRepayments = async (req, res) => {
+	try {
+		const user = await User.findById(req.params.id).populate("repayments");
+		const repayments = user.repayments;
+		res.json(repayments);
+	} catch (err) {
+		res.json("error fetching repayments");
+	}
+};
+const getBudget = async (req, res) => {
+	try {
+		const user = await User.findById(req.params.id).populate("budgets");
+		const budgets = user.budgets;
+		res.json(budgets);
+	} catch (err) {
+		res.json("error fetching budget");
+	}
+};
 module.exports = {
 	register,
 	login,
 	getAllGroups,
+	getAllRepayments,
+	getBudget,
 };

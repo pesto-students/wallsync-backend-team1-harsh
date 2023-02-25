@@ -12,6 +12,8 @@ const userSchema = new Schema(
 		isAdmin: { type: Boolean, default: false },
 		password: { type: String, required: true },
 		groups: { type: [Schema.Types.ObjectId], ref: "Groups" },
+		repayments: { type: [Schema.Types.ObjectId], ref: "Repayments" },
+		budgets: { type: [Schema.Types.ObjectId], ref: "Budgets" },
 	},
 	{ timestamps: true }
 );

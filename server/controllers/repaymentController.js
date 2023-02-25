@@ -8,6 +8,8 @@ const addRepayment = (req, res) => {
 			repayment
 				.save()
 				.then((bd) => {
+					ud.repayments.push(bd);
+					ud.save();
 					res.json(bd);
 				})
 				.catch((err) => {
@@ -53,24 +55,8 @@ const deleteRepayment = (req, res) => {
 		});
 };
 
-const getRepayments = (req, res) => {
-	User.findById(req.params.id)
-		.then((ud) => {
-			Repayment.find()
-				.then((rd) => {
-					res.json({ repayments: rd });
-				})
-				.catch((err) => {
-					res.json({ message: "error fetching repayments" });
-				});
-		})
-		.catch((err) => {
-			res.json({ message: "error fetching user" });
-		});
-};
 module.exports = {
 	addRepayment,
 	editRepayment,
 	deleteRepayment,
-	getRepayments,
 };
