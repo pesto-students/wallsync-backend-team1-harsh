@@ -20,7 +20,6 @@ const addBudget = (req, res) => {
 
 const addTransaction = (req, res) => {
 	Budget.findOne({ user: req.params.user }).then((bd) => {
-		console.log(bd);
 		const newExpense = new Transaction({
 			description: req.body.description,
 			amount: req.body.amount,
@@ -45,26 +44,7 @@ const addTransaction = (req, res) => {
 	});
 };
 
-const filterBudget = (req, res) => {
-	const type = req.params.type;
-	Budget.findOne({ user: req.params.user }).then((bd) => {
-		let datearr = [];
-		let resArr = [];
-		if (type === "month") {
-			bd.expensesArray.map((i) => {
-				datearr.push(i.date.toString().substr(4, 6));
-			});
-			bd.expensesArray.map((i) => {
-				if (i.date.toString().substr(4, 6) === "Feb 18") {
-					resArr.push(i);
-				}
-			});
-		}
-		res.json(resArr);
-	});
-};
 module.exports = {
 	addBudget,
 	addTransaction,
-	filterBudget,
 };

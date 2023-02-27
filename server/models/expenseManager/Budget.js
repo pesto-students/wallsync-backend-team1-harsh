@@ -10,6 +10,7 @@ const BudgetSchema = new Schema(
 		total: { type: Number, default: 0 },
 		savings: { type: Number },
 		date: { type: Date, default: Date.now },
+		monthly: { type: Array },
 	},
 	{ timestamps: true }
 );
