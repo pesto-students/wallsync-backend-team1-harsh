@@ -11,7 +11,7 @@ router.put(
 	contributionController.editContribution
 );
 router.delete(
-	"/:id:groupName/:contributionId/deleteCont",
+	"/:id/:groupName/:contributionId/deleteCont",
 	contributionController.deleteContribution
 );
 module.exports = router;
