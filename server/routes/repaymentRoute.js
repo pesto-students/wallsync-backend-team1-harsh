@@ -4,6 +4,9 @@ const repaymentController = require("../controllers/repaymentController");
 
 router.post("/:id/addRepayment", repaymentController.addRepayment);
 router.put("/:id/:repaymentId/edit", repaymentController.editRepayment);
-router.delete("/:id/:repaymentId/delete", repaymentController.deleteRepayment);
+router.delete(
+	"/:id/:repaymentId/deleteRepayment",
+	repaymentController.deleteRepayment
+);
 
 module.exports = router;

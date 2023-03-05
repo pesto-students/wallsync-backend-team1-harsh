@@ -34,6 +34,7 @@ const addTransaction = (req, res) => {
 
 			let savings = bd.income - bd.total;
 			bd.savings = savings;
+
 			bd.save();
 			res.json({
 				expenses: bd.expensesArray,
@@ -44,7 +45,17 @@ const addTransaction = (req, res) => {
 	});
 };
 
+const sort = (req, res) => {
+	User.find().then((data) => {
+		res.json(data);
+	});
+};
+// const sort = async (req, res) => {
+// 	const budget = await Budget.findOne({ user: req.params.user });
+// 	res.json(budget);
+// };
 module.exports = {
 	addBudget,
 	addTransaction,
+	sort,
 };

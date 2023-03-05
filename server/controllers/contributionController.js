@@ -44,6 +44,55 @@ const addContribution = (req, res) => {
 		});
 };
 
+const editContribution = (req, res) => {
+	User.findById(req.params.id)
+		.then((ud) => {
+			Group.findOne({ groupName: req.params.groupName })
+				.then((gd) => {
+					Contribution.findByIdAndUpdate(req.params.contributionId, req.body, {
+						new: true,
+					})
+						.then((cd) => {
+							console.log(cd);
+							res.json({ message: `${cd}-updated contribution` });
+						})
+						.catch((err) => {
+							res.json({ message: "error updating contribution" });
+						});
+				})
+				.catch((err) => {
+					res.json({ message: "group not found" });
+				});
+		})
+		.catch((err) => {
+			res.json({ message: "user not found" });
+		});
+};
+
+const deleteContribution = (req, res) => {
+	User.findById(req.params.id)
+		.then((ud) => {
+			Group.findOne({ groupName: req.params.groupName })
+				.then((gd) => {
+					Contribution.findByIdAndDelete(req.params.contributionId)
+						.then((cd) => {
+							gd.save();
+							res.json({ message: `${cd}-deleted contribution` });
+						})
+						.catch((err) => {
+							res.json({ message: "error deleting contribution" });
+						});
+				})
+				.catch((err) => {
+					res.json({ message: "group not found" });
+				});
+		})
+		.catch((err) => {
+			res.json({ message: "user not found" });
+		});
+};
 module.exports = {
 	addContribution,
+	editContribution,
+	deleteContribution,
 };

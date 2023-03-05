@@ -105,10 +105,26 @@ const getBudget = async (req, res) => {
 		res.json("error fetching budget");
 	}
 };
+const getUser = (req, res) => {
+	User.findById(req.params.id)
+		.then((data) => {
+			res.json(data);
+		})
+		.catch((err) => {
+			res.json(err);
+		});
+};
+const getUsers = (req, res) => {
+	User.find().then((data) => {
+		res.json(data);
+	});
+};
 module.exports = {
 	register,
 	login,
 	getAllGroups,
 	getAllRepayments,
 	getBudget,
+	getUser,
+	getUsers,
 };

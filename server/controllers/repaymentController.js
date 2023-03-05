@@ -44,6 +44,7 @@ const deleteRepayment = (req, res) => {
 		.then((ud) => {
 			Repayment.findByIdAndDelete(req.params.repaymentId)
 				.then(() => {
+					ud.save();
 					res.json({ message: "repayment deleted" });
 				})
 				.catch((err) => {

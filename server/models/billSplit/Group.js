@@ -15,6 +15,7 @@ const groupSchema = new Schema(
 		},
 		memberBalances: { type: Array },
 		percentageArray: [{ name: String, percent: Number }],
+		displayPicture: { type: String },
 	},
 	{ timestamps: true }
 );
