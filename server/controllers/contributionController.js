@@ -95,7 +95,6 @@ const editContribution = (req, res) => {
 						new: true,
 					})
 						.then((cd) => {
-							console.log(cd);
 							const index = gd.contributions.findIndex(
 								(item) => item.id.toString() === req.params.contributionId
 							);
@@ -135,6 +134,7 @@ const deleteContribution = (req, res) => {
 								(item) => item.id !== req.params.contributionId
 							);
 
+							gd.markModified("contributions");
 							gd.save();
 							res.json({ message: `${cd}-deleted contribution` });
 						})
