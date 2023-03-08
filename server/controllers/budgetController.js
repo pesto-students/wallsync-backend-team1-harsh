@@ -45,24 +45,15 @@ const addTransaction = (req, res) => {
 	});
 };
 
-const sort = (req, res) => {
-	User.find().then((data) => {
-		res.json(data);
-	});
-};
-
 const deleteTransaction = (req, res) => {
 	Budget.findOne({ user: req.params.user })
 		.then((bd) => {
 			Transaction.findByIdAndDelete(req.params.expenseId)
 				.then((td) => {
-					// console.log(bd);
 					bd.expensesArray = bd.expensesArray.filter(
 						(item) => item._id.toString() !== req.params.expenseId
 					);
-					// bd.expensesArray = bd.expensesArray.filter(
-					// 	(item) => item._id.tostring() !== req.params.expenseId
-					// );
+
 					let total = 0;
 					bd.expensesArray.map((i) => {
 						total += i.amount;
@@ -82,9 +73,67 @@ const deleteTransaction = (req, res) => {
 		});
 };
 
+const editTransaction = (req, res) => {
+	Budget.findOne({ user: req.params.user })
+		.then((bd) => {
+			Transaction.findByIdAndUpdate(req.params.expenseId, req.body, {
+				new: true,
+			})
+				.then((td) => {
+					const index = bd.expensesArray.findIndex(
+						(item) => item._id.toString() === req.params.expenseId
+					);
+					if (index !== -1) {
+						bd.expensesArray[index] = {
+							_id: td._id,
+							description: td.description,
+							amount: td.amount,
+							date: td.date,
+						};
+					}
+					let total = 0;
+					bd.expensesArray.map((i) => {
+						total += i.amount;
+					});
+					bd.total = total;
+					bd.markModified("expensesArray");
+					bd.markModified("total");
+					bd.save();
+					res.json({ message: "transaction updated" });
+				})
+				.catch((err) => {
+					res.json({ message: "no transaction found" });
+				});
+		})
+		.catch((err) => {
+			res.json({ message: "no budget found" });
+		});
+};
+const filterTransaction = (req, res) => {
+	console.log("starting");
+	Budget.findOne({ user: req.params.user })
+		.then((bd) => {
+			console.log(bd);
+			bd.expensesArray.forEach((expense) => {
+				const month = expense.date.slice(0, 7);
+				if (!bd.monthly[month]) {
+					bd.monthly[month] = [];
+				}
+				bd.monthly[month].push(expense);
+			});
+			console.log("here==============", bd.monthly);
+			bd.save();
+			res.json(bd.monthly);
+		})
+		.catch((err) => {
+			res.json({ message: "no budget found" });
+		});
+};
+
 module.exports = {
 	addBudget,
 	addTransaction,
-	sort,
+	filterTransaction,
 	deleteTransaction,
+	editTransaction,
 };
