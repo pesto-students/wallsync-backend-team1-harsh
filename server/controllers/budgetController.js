@@ -50,12 +50,41 @@ const sort = (req, res) => {
 		res.json(data);
 	});
 };
-// const sort = async (req, res) => {
-// 	const budget = await Budget.findOne({ user: req.params.user });
-// 	res.json(budget);
-// };
+
+const deleteTransaction = (req, res) => {
+	Budget.findOne({ user: req.params.user })
+		.then((bd) => {
+			Transaction.findByIdAndDelete(req.params.expenseId)
+				.then((td) => {
+					// console.log(bd);
+					bd.expensesArray = bd.expensesArray.filter(
+						(item) => item._id.toString() !== req.params.expenseId
+					);
+					// bd.expensesArray = bd.expensesArray.filter(
+					// 	(item) => item._id.tostring() !== req.params.expenseId
+					// );
+					let total = 0;
+					bd.expensesArray.map((i) => {
+						total += i.amount;
+					});
+					bd.total = total;
+					bd.markModified("expensesArray");
+					bd.markModified("total");
+					bd.save();
+					res.json({ message: "transaction deleted" });
+				})
+				.catch((err) => {
+					res.json({ message: "no transaction found" });
+				});
+		})
+		.catch((err) => {
+			res.json({ message: "no budget found" });
+		});
+};
+
 module.exports = {
 	addBudget,
 	addTransaction,
 	sort,
+	deleteTransaction,
 };
