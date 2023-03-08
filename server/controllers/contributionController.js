@@ -106,6 +106,14 @@ const editContribution = (req, res) => {
 									share: cd.amount,
 								};
 							}
+							let total = 0;
+							gd.contributions.map((i) => {
+								total += i.share;
+							});
+							gd.groupTotal = total;
+							gd.markModified("groupTotal");
+							gd.markModified("contributions");
+
 							gd.save();
 							res.json({ message: `${cd}-updated contribution` });
 						})
@@ -133,9 +141,15 @@ const deleteContribution = (req, res) => {
 							gd.contributions = gd.contributions.filter(
 								(item) => item.id !== req.params.contributionId
 							);
-
+							let total = 0;
+							gd.contributions.map((i) => {
+								total += i.share;
+							});
+							gd.groupTotal = total;
+							gd.markModified("groupTotal");
 							gd.markModified("contributions");
 							gd.save();
+
 							res.json({ message: `${cd}-deleted contribution` });
 						})
 						.catch((err) => {
