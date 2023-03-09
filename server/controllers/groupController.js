@@ -51,22 +51,35 @@ const addUserToGroup = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
 			Group.findOne({ groupName: req.params.groupName })
-				.then((groupDeets) => {
+				.then((gd) => {
 					User.findOne({ email: req.body.email })
 						.then((user) => {
 							if (user) {
-								if (groupDeets.groupMembers.includes(user.firstName)) {
+								if (gd.groupMembers.includes(user.firstName)) {
 									res.json("user already exists");
 								} else {
-									groupDeets.groupMembers.push(user.firstName);
-									groupDeets.save();
+									gd.groupMembers.push(user.firstName);
+									gd.save();
 									res.status(202).json({
 										message: "added",
-										members: groupDeets.groupMembers,
+										members: gd.groupMembers,
 									});
 									ud.save();
 								}
 							} else {
+								const options = {
+									from: "wallsyncapp@gmail.com",
+									to: `${req.body.email}`,
+									subject: "WallSync invite",
+									text: "Join your friends at WallSync",
+								};
+								transporter.sendMail(options, function (err, info) {
+									if (err) {
+										console.log(err);
+										return;
+									}
+									console.log("Sent: " + info.response);
+								});
 								res.json({ message: `send an invite to ${req.body.email}` });
 							}
 						})

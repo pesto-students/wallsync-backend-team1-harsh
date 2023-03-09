@@ -3,7 +3,8 @@ const jwt = require("jsonwebtoken");
 const Group = require("../models/billSplit/Group");
 const Contribution = require("../models/billSplit/Contribution");
 const User = require("../models/user/User");
-
+const transporter = require("../config/mail");
+const nodemailer = require("nodemailer");
 const register = async (req, res) => {
 	try {
 		const user = await User.findOne({ email: req.body.email });
@@ -26,6 +27,19 @@ const register = async (req, res) => {
 		res.json({
 			msg: "user is sucessfully registered",
 			userdata,
+		});
+		const options = {
+			from: "wallsyncapp@gmail.com",
+			to: `${req.body.email}`,
+			subject: "Wallsync Account created",
+			text: "WELCOME, Your Wallsync Account has been created",
+		};
+		transporter.sendMail(options, function (err, info) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			console.log("Sent: " + info.response);
 		});
 	} catch (err) {
 		console.log(err);
@@ -60,24 +74,6 @@ const login = async (req, res) => {
 	}
 };
 
-// const getAllGroups = (req, res) => {
-// 	User.findById(req.params.id)
-// 		.then((ud) => {
-// 			const groupId = ud.groups.map((i) => i);
-// 			let res = [];
-// 			Group.findById(req.params.groupId)
-// 				.then((data) => {
-// 					res.push(data);
-// 					res.json(res);
-// 				})
-// 				.catch((err) => {
-// 					res.json("Error fetching group data");
-// 				});
-// 		})
-// 		.catch((err) => {
-// 			res.json("error fetching groups");
-// 		});
-// };
 const getAllGroups = async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id).populate("groups");
