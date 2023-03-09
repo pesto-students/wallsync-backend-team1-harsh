@@ -3,10 +3,9 @@ const Budget = require("../models/expenseManager/Budget");
 const User = require("../models/user/User");
 
 const addBudget = (req, res) => {
-	const id = req.params.id;
-	User.findById(id).then((ud) => {
+	User.findById(req.params.id).then((ud) => {
 		const budget = new Budget({
-			user: id,
+			user: req.params.id,
 			income: req.body.income,
 			limit: req.body.limit,
 		});
@@ -59,8 +58,12 @@ const deleteTransaction = (req, res) => {
 						total += i.amount;
 					});
 					bd.total = total;
+					let savings = bd.income - bd.total;
+					bd.savings = savings;
 					bd.markModified("expensesArray");
 					bd.markModified("total");
+					bd.markModified("savings");
+
 					bd.save();
 					res.json({ message: "transaction deleted" });
 				})
@@ -96,8 +99,11 @@ const editTransaction = (req, res) => {
 						total += i.amount;
 					});
 					bd.total = total;
+					let savings = bd.income - bd.total;
+					bd.savings = savings;
 					bd.markModified("expensesArray");
 					bd.markModified("total");
+					bd.markModified("savings");
 					bd.save();
 					res.json({ message: "transaction updated" });
 				})
@@ -110,10 +116,10 @@ const editTransaction = (req, res) => {
 		});
 };
 const filterTransaction = (req, res) => {
-	console.log("starting");
-	Budget.findOne({ user: req.params.user })
+	Budget.findById(req.params.budgetId)
 		.then((bd) => {
-			console.log(bd);
+			console.log(bd.monthly);
+			console.log(bd.expensesArray);
 			bd.expensesArray.forEach((expense) => {
 				const month = expense.date.slice(0, 7);
 				if (!bd.monthly[month]) {
@@ -129,6 +135,30 @@ const filterTransaction = (req, res) => {
 			res.json({ message: "no budget found" });
 		});
 };
+
+// const filterTransaction = (req, res) => {
+// 	Budget.findById(req.params.budgetId)
+// 		.then((bd) => {
+// 			if (!bd) {
+// 				return res.json({ message: "no budget found" });
+// 			}
+// 			console.log(bd.monthly);
+// 			console.log(bd.expensesArray);
+// 			bd.expensesArray.forEach((expense) => {
+// 				const month = expense.date.slice(0, 7);
+// 				if (!bd.monthly[month]) {
+// 					bd.monthly[month] = [];
+// 				}
+// 				bd.monthly[month].push(expense);
+// 			});
+// 			console.log("here==============", bd.monthly);
+// 			bd.save();
+// 			res.json(bd.monthly);
+// 		})
+// 		.catch((err) => {
+// 			res.json({ message: "no budget found" });
+// 		});
+// };
 
 module.exports = {
 	addBudget,

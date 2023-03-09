@@ -12,5 +12,5 @@ router.put(
 	"/budget/:user/:expenseId/editExpense",
 	budgetController.editTransaction
 );
-router.get("/budget/:user/filter", budgetController.filterTransaction);
+router.get("/budget/:budgetId/filter", budgetController.filterTransaction);
 module.exports = router;
