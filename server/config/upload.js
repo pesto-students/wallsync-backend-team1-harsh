@@ -5,7 +5,7 @@ const cloudinary = require("cloudinary").v2;
 
 // Configuration
 cloudinary.config({
-	cloud_name: "dktrp1uua",
+	cloud_name: "wallsync",
 	api_key: "734138985989871",
 	api_secret: "xppRkrFusRVzORS3QQ6zkiLWNBY",
 });
@@ -18,15 +18,6 @@ const storage = new CloudinaryStorage({
 		transformation: [{ width: 500, height: 500, crop: "limit" }],
 	},
 });
-// const storage = multer.diskStorage({
-// 	destination: "./public/uploads/",
-// 	filename: function (req, file, cb) {
-// 		cb(
-// 			null,
-// 			file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-// 		);
-// 	},
-// });
 
 const upload = multer({
 	storage: storage,
@@ -44,4 +35,5 @@ const upload = multer({
 		}
 	},
 }).single("profilePicture");
+
 module.exports = upload;

@@ -6,6 +6,7 @@ const User = require("../models/user/User");
 const transporter = require("../config/mail");
 const nodemailer = require("nodemailer");
 const upload = require("../config/upload");
+const cloudinary = require("cloudinary").v2;
 // const register = async (req, res) => {
 // 	try {
 // 		const user = await User.findOne({ email: req.body.email });
@@ -47,6 +48,7 @@ const upload = require("../config/upload");
 // 		console.log(err);
 // 	}
 // };
+//
 const register = async (req, res) => {
 	try {
 		upload(req, res, async (err) => {
@@ -62,7 +64,11 @@ const register = async (req, res) => {
 					msg: "User Already Exist",
 				});
 			}
-
+			const result = await cloudinary.uploader.upload(req.file.path, {
+				folder: "uploads",
+				allowed_formats: ["png", "jpg", "jpeg"],
+				transformation: [{ width: 500, height: 500, crop: "limit" }],
+			});
 			const password = await bcrypt.hash(req.body.password, 10);
 			const userdata = await User.create({
 				firstName: req.body.firstName,
@@ -71,6 +77,7 @@ const register = async (req, res) => {
 				email: req.body.email,
 				zip: req.body.zip,
 				profilePicture: {
+					public_id: result.public_id,
 					data: req.file.buffer,
 					contentType: req.file.mimetype,
 					imageName: req.file.originalname,

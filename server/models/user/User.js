@@ -9,6 +9,7 @@ const userSchema = new Schema(
 		email: { type: String, required: true, unique: true },
 		zip: { type: Number, required: true },
 		profilePicture: {
+			public_id: { type: String },
 			data: { type: Buffer },
 			contentType: { type: String },
 			imageName: { type: String },
