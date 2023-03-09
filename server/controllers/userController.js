@@ -5,46 +5,103 @@ const Contribution = require("../models/billSplit/Contribution");
 const User = require("../models/user/User");
 const transporter = require("../config/mail");
 const nodemailer = require("nodemailer");
+const upload = require("../config/upload");
+// const register = async (req, res) => {
+// 	try {
+// 		const user = await User.findOne({ email: req.body.email });
+// 		if (user) {
+// 			return res.json({
+// 				msg: "User Already Exist",
+// 			});
+// 		}
+
+// 		const password = await bcrypt.hash(req.body.password, 10);
+// 		const userdata = await User.create({
+// 			firstName: req.body.firstName,
+// 			lastName: req.body.lastName,
+// 			phone: req.body.phone,
+// 			email: req.body.email,
+// 			zip: req.body.zip,
+// 			profilePicture: req.body.profilePicture,
+// 			password,
+// 		});
+
+// 		res.json({
+// 			msg: "user is sucessfully registered",
+// 			userdata,
+// 		});
+// 		const options = {
+// 			from: "wallsyncapp@gmail.com",
+// 			to: `${req.body.email}`,
+// 			subject: "Wallsync Account created",
+// 			text: "WELCOME, Your Wallsync Account has been created",
+// 		};
+// 		transporter.sendMail(options, function (err, info) {
+// 			if (err) {
+// 				console.log(err);
+// 				return;
+// 			}
+// 			console.log("Sent: " + info.response);
+// 		});
+// 	} catch (err) {
+// 		console.log(err);
+// 	}
+// };
 const register = async (req, res) => {
 	try {
-		const user = await User.findOne({ email: req.body.email });
-		if (user) {
-			return res.json({
-				msg: "User Already Exist",
-			});
-		}
-		const password = await bcrypt.hash(req.body.password, 10);
-		const userdata = await User.create({
-			firstName: req.body.firstName,
-			lastName: req.body.lastName,
-			phone: req.body.phone,
-			email: req.body.email,
-			zip: req.body.zip,
-			profilePicture: req.body.profilePicture,
-			password,
-		});
-
-		res.json({
-			msg: "user is sucessfully registered",
-			userdata,
-		});
-		const options = {
-			from: "wallsyncapp@gmail.com",
-			to: `${req.body.email}`,
-			subject: "Wallsync Account created",
-			text: "WELCOME, Your Wallsync Account has been created",
-		};
-		transporter.sendMail(options, function (err, info) {
+		upload(req, res, async (err) => {
 			if (err) {
-				console.log(err);
-				return;
+				return res.json({
+					msg: "Error uploading file",
+				});
 			}
-			console.log("Sent: " + info.response);
+
+			const user = await User.findOne({ email: req.body.email });
+			if (user) {
+				return res.json({
+					msg: "User Already Exist",
+				});
+			}
+
+			const password = await bcrypt.hash(req.body.password, 10);
+			const userdata = await User.create({
+				firstName: req.body.firstName,
+				lastName: req.body.lastName,
+				phone: req.body.phone,
+				email: req.body.email,
+				zip: req.body.zip,
+				profilePicture: {
+					data: req.file.buffer,
+					contentType: req.file.mimetype,
+					imageName: req.file.originalname,
+				},
+				password,
+			});
+
+			res.json({
+				msg: "user is sucessfully registered",
+				userdata,
+			});
+
+			const options = {
+				from: "wallsyncapp@gmail.com",
+				to: `${req.body.email}`,
+				subject: "Wallsync Account created",
+				text: "WELCOME, Your Wallsync Account has been created",
+			};
+			transporter.sendMail(options, function (err, info) {
+				if (err) {
+					console.log(err);
+					return;
+				}
+				console.log("Sent: " + info.response);
+			});
 		});
 	} catch (err) {
 		console.log(err);
 	}
 };
+
 const login = async (req, res) => {
 	const { email, password } = req.body;
 	try {

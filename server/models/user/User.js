@@ -8,7 +8,11 @@ const userSchema = new Schema(
 		phone: { type: Number, required: true, unique: true },
 		email: { type: String, required: true, unique: true },
 		zip: { type: Number, required: true },
-		profilePicture: { type: String, default: "" },
+		profilePicture: {
+			data: { type: Buffer },
+			contentType: { type: String },
+			imageName: { type: String },
+		},
 		isAdmin: { type: Boolean, default: false },
 		password: { type: String, required: true },
 		groups: { type: [Schema.Types.ObjectId], ref: "Groups" },
