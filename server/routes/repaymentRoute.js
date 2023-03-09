@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 const repaymentController = require("../controllers/repaymentController");
 
-router.post("/:id/addRepayment", repaymentController.addRepayment);
+router.post("/repayment/:id/addRepayment", repaymentController.addRepayment);
 router.put(
-	"/:id/:repaymentId/editRepayment",
+	"/repayment/:id/:repaymentId/editRepayment",
 	repaymentController.editRepayment
 );
 router.delete(
-	"/:id/:repaymentId/deleteRepayment",
+	"/repayment/:id/:repaymentId/deleteRepayment",
 	repaymentController.deleteRepayment
 );
 

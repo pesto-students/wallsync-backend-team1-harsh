@@ -2,12 +2,15 @@ const express = require("express");
 const router = express.Router();
 const budgetController = require("../controllers/budgetController");
 
-router.post("/:id/addBudget", budgetController.addBudget);
-router.post("/:user/addExpense", budgetController.addTransaction);
+router.post("/budget/:id/addBudget", budgetController.addBudget);
+router.post("/budget/:user/addExpense", budgetController.addTransaction);
 router.delete(
-	"/:user/:expenseId/deleteExpense",
+	"/budget/:user/:expenseId/deleteExpense",
 	budgetController.deleteTransaction
 );
-router.put("/:user/:expenseId/editExpense", budgetController.editTransaction);
-router.get("/:user/filterExpense", budgetController.filterTransaction);
+router.put(
+	"/budget/:user/:expenseId/editExpense",
+	budgetController.editTransaction
+);
+router.get("/budget/:user/filter", budgetController.filterTransaction);
 module.exports = router;

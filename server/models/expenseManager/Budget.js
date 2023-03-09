@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const BudgetSchema = new Schema(
 	{
-		user: { type: Schema.Types.ObjectId, ref: "Users" },
+		user: { type: Schema.Types.ObjectId, ref: "users" },
 		income: { type: Number },
 		limit: { type: Number },
 		expensesArray: { type: Array },

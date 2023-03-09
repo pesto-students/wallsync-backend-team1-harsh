@@ -2,13 +2,16 @@ const express = require("express");
 const contributionController = require("../controllers/contributionController");
 const router = express.Router();
 
-router.post("/:id/:groupName/addCont", contributionController.addContribution);
+router.post(
+	"/contribution/:id/:groupName/addCont",
+	contributionController.addContribution
+);
 router.put(
-	"/:id/:groupName/:contributionId/editCont",
+	"/contribution/:id/:groupName/:contributionId/editCont",
 	contributionController.editContribution
 );
 router.delete(
-	"/:id/:groupName/:contributionId/deleteCont",
+	"/contribution/:id/:groupName/:contributionId/deleteCont",
 	contributionController.deleteContribution
 );
 
