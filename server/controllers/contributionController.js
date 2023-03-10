@@ -4,6 +4,7 @@ const User = require("../models/user/User");
 
 const addContribution = (req, res) => {
 	User.findById(req.params.id)
+
 		.then((ud) => {
 			Group.findOne({ groupName: req.params.groupName })
 				.then((gd) => {
@@ -17,11 +18,12 @@ const addContribution = (req, res) => {
 										id: data._id.toString(),
 										name: data.contributedBy,
 										desc: data.description,
-										group: groupName,
+										group: data.group,
 										share: data.amount,
 									});
 									gd.groupTotal += data.amount;
 									gd.save();
+									// res.json({ lol: gd });
 									res.status(202).json({
 										contributions: gd.contributions,
 										total: gd.groupTotal,
@@ -37,10 +39,12 @@ const addContribution = (req, res) => {
 						res.json({ message: "join the group first" });
 					}
 				})
-				.catch("group not found");
+				.catch((err) => {
+					res.json("group not found", err);
+				});
 		})
 		.catch((err) => {
-			res.json("user not found");
+			res.json("user not found", err);
 		});
 };
 
