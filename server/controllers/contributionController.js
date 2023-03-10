@@ -17,6 +17,7 @@ const addContribution = (req, res) => {
 										id: data._id.toString(),
 										name: data.contributedBy,
 										desc: data.description,
+										group: groupName,
 										share: data.amount,
 									});
 									gd.groupTotal += data.amount;
@@ -27,7 +28,7 @@ const addContribution = (req, res) => {
 									});
 								})
 								.catch((err) => {
-									res.json("error add contribution");
+									res.json(err);
 								});
 						} else {
 							res.json("add user to group first");
