@@ -62,6 +62,7 @@ const editContribution = (req, res) => {
 									name: cd.contributedBy,
 									desc: cd.description,
 									share: cd.amount,
+									group: groupName,
 								};
 							}
 							let total = 0;
