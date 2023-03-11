@@ -113,7 +113,7 @@ const deleteContribution = (req, res) => {
 							gd.markModified("contributions");
 							gd.save();
 
-							res.json({ message: `${cd}-deleted contribution` });
+							res.json({ message: cd._id });
 						})
 						.catch((err) => {
 							res.json({ message: "error deleting contribution" });

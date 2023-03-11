@@ -62,6 +62,7 @@ const addUserToGroup = (req, res) => {
 									gd.save();
 									res.status(202).json({
 										message: "added",
+										newUser: user,
 										members: gd.groupMembers,
 									});
 									ud.save();
