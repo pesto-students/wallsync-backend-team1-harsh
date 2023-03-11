@@ -36,6 +36,7 @@ const addTransaction = (req, res) => {
 
 			bd.save();
 			res.json({
+				newTransaction: data,
 				expenses: bd.expensesArray,
 				total: bd.total,
 				savings: bd.savings,
@@ -65,7 +66,7 @@ const deleteTransaction = (req, res) => {
 					bd.markModified("savings");
 
 					bd.save();
-					res.json({ message: "transaction deleted" });
+					res.json({ deletedId: td._id, message: "transaction deleted" });
 				})
 				.catch((err) => {
 					res.json({ message: "no transaction found" });
