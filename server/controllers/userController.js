@@ -121,6 +121,8 @@ const login = async (req, res) => {
 						id: user._id,
 						email: user.email,
 						name: user.firstName + " " + user.lastName,
+						firstName: user.firstName,
+						lastName: user.lastName,
 						profilePicture: user.profilePicture,
 						zip: user.zip,
 						phone: user.phone,
@@ -168,6 +170,59 @@ const getBudget = async (req, res) => {
 		res.json("error fetching budget");
 	}
 };
+
+const updateUser = async (req, res) => {
+	try {
+		let user = await User.findById(req.params.id);
+
+		if (!user) {
+			return res.status(404).json({ msg: "User not found" });
+		}
+
+		upload(req, res, async (err) => {
+			if (err) {
+				return res.status(400).json({
+					msg: "Error uploading file",
+				});
+			}
+
+			if (req.file) {
+				const result = await cloudinary.uploader.upload(req.file.path, {
+					folder: "uploads",
+					allowed_formats: ["png", "jpg", "jpeg"],
+					transformation: [{ width: 500, height: 500, crop: "limit" }],
+				});
+
+				user.profilePicture = {
+					public_id: result.public_id,
+					data: req.file.buffer,
+					contentType: req.file.mimetype,
+					imageName: req.file.originalname,
+				};
+			}
+
+			user.firstName = req.body.firstName || user.firstName;
+			user.lastName = req.body.lastName || user.lastName;
+			user.phone = req.body.phone || user.phone;
+			user.email = req.body.email || user.email;
+			user.zip = req.body.zip || user.zip;
+			user.password = req.body.password
+				? await bcrypt.hash(req.body.password, 10)
+				: user.password;
+
+			const updatedUser = await user.save();
+
+			res.json({
+				msg: "User data successfully updated",
+				updatedUser,
+			});
+		});
+	} catch (err) {
+		console.log(err);
+		res.status(500).json({ msg: "Server Error" });
+	}
+};
+
 const getUser = (req, res) => {
 	User.findById(req.params.id)
 		.then((data) => {
@@ -190,4 +245,5 @@ module.exports = {
 	getBudget,
 	getUser,
 	getUsers,
+	updateUser,
 };
