@@ -118,7 +118,46 @@ const addPercentageArray = (req, res) => {
 			res.json("error finding user");
 		});
 };
+const stats = (req, res) => {
+	User.findById(req.params.id)
+		.then((ud) => {
+			Group.findOne({ groupName: req.params.groupName })
+				.then((gd) => {
+					let result = [];
+					// collecting names not present in the contributed array
+					let uniqueNames = [
+						...new Set(gd.contributions.map((item) => item.name)),
+					];
 
+					uniqueNames.forEach((name) => {
+						let shares = 0;
+						gd.contributions.forEach((item) => {
+							if (item.name === name) {
+								shares += item.share;
+							}
+						});
+						result.push({ name, share: shares });
+					});
+
+					// inserting members into the result array who have still not contributed
+					let updatedResult = [...result];
+
+					gd.groupMembers.forEach((member) => {
+						if (!result.find((x) => x.name === member)) {
+							updatedResult.push({ name: member, share: 0 });
+						}
+					});
+					gd.finalContributions = updatedResult;
+					res.json({ message: "stats array", stats: gd.finalContributions });
+				})
+				.catch((err) => {
+					res.json("group not found");
+				});
+		})
+		.catch((err) => {
+			res.json("user not found");
+		});
+};
 const settle = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -222,4 +261,5 @@ module.exports = {
 	settle,
 	deleteGroup,
 	editGroup,
+	stats,
 };

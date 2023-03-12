@@ -23,8 +23,34 @@ const addContribution = (req, res) => {
 									});
 									gd.groupTotal += data.amount;
 									gd.save();
+									let result = [];
+									// collecting names not present in the contributed array
+									let uniqueNames = [
+										...new Set(gd.contributions.map((item) => item.name)),
+									];
+
+									uniqueNames.forEach((name) => {
+										let shares = 0;
+										gd.contributions.forEach((item) => {
+											if (item.name === name) {
+												shares += item.share;
+											}
+										});
+										result.push({ name, share: shares });
+									});
+
+									// inserting members into the result array who have still not contributed
+									let updatedResult = [...result];
+
+									gd.groupMembers.forEach((member) => {
+										if (!result.find((x) => x.name === member)) {
+											updatedResult.push({ name: member, share: 0 });
+										}
+									});
+									gd.finalContributions = updatedResult;
 									// res.json({ lol: gd });
 									res.status(202).json({
+										stats: gd.finalContributions,
 										contributions: gd.contributions,
 										total: gd.groupTotal,
 									});

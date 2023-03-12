@@ -8,9 +8,9 @@ function equalSplit(members) {
 	members.map((member) => {
 		const remainder = equally - member.share;
 		if (remainder > 0) {
-			result.push({ name: member.name, toSettle: remainder });
+			result.push({ name: member.name, toSettle: remainder.toFixed(2) });
 		} else {
-			result.push({ name: member.name, owed: Math.abs(remainder) });
+			result.push({ name: member.name, owed: Math.abs(remainder.toFixed(2)) });
 		}
 	});
 	return result;
