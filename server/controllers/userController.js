@@ -210,8 +210,10 @@ const updateUser = async (req, res) => {
 				? await bcrypt.hash(req.body.password, 10)
 				: user.password;
 
-			const updatedUser = await user.save();
-
+			// const updatedUser = await user.save();
+			const updatedUser = await User.findByIdAndUpdate(req.params.id, user, {
+				new: true,
+			});
 			res.json({
 				msg: "User data successfully updated",
 				updatedUser,

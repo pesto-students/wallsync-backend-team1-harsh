@@ -188,8 +188,8 @@ const deleteGroup = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
 			Group.findOneAndDelete({ groupName: req.params.groupName })
-				.then(() => {
-					res.json({ message: "group deleted" });
+				.then((data) => {
+					res.json({ message: "group deleted", deletedGroup: data });
 					ud.save();
 				})
 				.catch((err) => {
