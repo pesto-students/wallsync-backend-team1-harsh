@@ -97,14 +97,42 @@ const addUserToGroup = (req, res) => {
 		});
 };
 
+// const addPercentageArray = (req, res) => {
+// 	User.findById(req.params.id)
+// 		.then((ud) => {
+// 			Group.findOne({ groupName: req.params.groupName })
+// 				.then((gd) => {
+// 					req.body.map((i) => {
+// 						gd.percentageArray.push({ name: i.name, percent: i.percent });
+// 					});
+// 					gd.save();
+// 					ud.save();
+
+// 					res.status(202).json(gd.percentageArray);
+// 				})
+// 				.catch((err) => {
+// 					res.json(err);
+// 				});
+// 		})
+// 		.catch((err) => {
+// 			res.json("error finding user");
+// 		});
+// };
 const addPercentageArray = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
 			Group.findOne({ groupName: req.params.groupName })
 				.then((gd) => {
-					req.body.map((i) => {
-						gd.percentageArray.push({ name: i.name, percent: i.percent });
-					});
+					if (gd.percentageArray.length === 0) {
+						req.body.forEach((i) => {
+							gd.percentageArray.push({ name: i.name, percent: i.percent });
+						});
+					} else {
+						gd.percentageArray = [];
+						req.body.forEach((i) => {
+							gd.percentageArray.push({ name: i.name, percent: i.percent });
+						});
+					}
 					gd.save();
 					ud.save();
 
@@ -156,6 +184,8 @@ const settle = (req, res) => {
 					);
 
 					if (req.params.split === "equal") {
+						gd.memberBalances = [];
+
 						gd.memberBalances = equalSplit(updatedResult);
 
 						res.json({
@@ -163,6 +193,7 @@ const settle = (req, res) => {
 							simplified: simplifyPayment(equalSettle.owed, equalSettle.settle),
 						});
 					} else {
+						gd.memberBalances = [];
 						gd.memberBalances = unequal(updatedResult, gd.percentageArray);
 
 						res.json({
