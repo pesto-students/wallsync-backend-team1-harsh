@@ -66,7 +66,11 @@ const deleteTransaction = (req, res) => {
 					bd.markModified("savings");
 
 					bd.save();
-					res.json({ deletedId: td._id, message: "transaction deleted" });
+					res.json({
+						deletedId: td._id,
+						message: "transaction deleted",
+						savings: bd.savings,
+					});
 				})
 				.catch((err) => {
 					res.json({ message: "no transaction found" });

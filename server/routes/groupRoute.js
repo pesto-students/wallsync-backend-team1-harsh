@@ -12,5 +12,5 @@ router.post(
 router.get("/group/:id/:groupName/settle/:split", groupController.settle);
 router.delete("/group/:id/:groupName/delete", groupController.deleteGroup);
 router.put("/group/:id/:groupName/edit", groupController.editGroup);
-router.get("/group/:id/:groupName/stats", groupController.stats);
+
 module.exports = router;

@@ -50,7 +50,7 @@ const addContribution = (req, res) => {
 									gd.finalContributions = updatedResult;
 									// res.json({ lol: gd });
 									res.status(202).json({
-										stats: gd.finalContributions,
+										finalContributions: gd.finalContributions,
 										contributions: gd.contributions,
 										total: gd.groupTotal,
 									});
@@ -135,11 +135,41 @@ const deleteContribution = (req, res) => {
 								total += i.share;
 							});
 							gd.groupTotal = total;
+
+							let result = [];
+							// collecting names not present in the contributed array
+							let uniqueNames = [
+								...new Set(gd.contributions.map((item) => item.name)),
+							];
+
+							uniqueNames.forEach((name) => {
+								let shares = 0;
+								gd.contributions.forEach((item) => {
+									if (item.name === name) {
+										shares += item.share;
+									}
+								});
+								result.push({ name, share: shares });
+							});
+
+							// inserting members into the result array who have still not contributed
+							let updatedResult = [...result];
+
+							gd.groupMembers.forEach((member) => {
+								if (!result.find((x) => x.name === member)) {
+									updatedResult.push({ name: member, share: 0 });
+								}
+							});
+							gd.finalContributions = updatedResult;
+
 							gd.markModified("groupTotal");
 							gd.markModified("contributions");
 							gd.save();
 
-							res.json({ message: cd._id });
+							res.json({
+								message: cd._id,
+								finalContributions: gd.finalContributions,
+							});
 						})
 						.catch((err) => {
 							res.json({ message: "error deleting contribution" });
