@@ -96,11 +96,7 @@ const editContribution = (req, res) => {
 							gd.contributions.map((i) => {
 								if (i.id == cd._id) {
 									i.name = cd.contributedBy;
-									// i.name = cd.name;
-
 									i.desc = cd.description;
-									// i.desc = cd.desc;
-
 									i.share = cd.amount;
 									i.group = cd.group;
 								}
@@ -110,13 +106,36 @@ const editContribution = (req, res) => {
 							gd.contributions.map((i) => {
 								total += i.share;
 							});
-							console.log(total, "after106");
 							gd.groupTotal = total;
-							console.log("444", gd);
 							gd.markModified("groupTotal");
 							gd.markModified("contributions");
 
 							gd.save();
+							let result = [];
+							// collecting names not present in the contributed array
+							let uniqueNames = [
+								...new Set(gd.contributions.map((item) => item.name)),
+							];
+
+							uniqueNames.forEach((name) => {
+								let shares = 0;
+								gd.contributions.forEach((item) => {
+									if (item.name === name) {
+										shares += item.share;
+									}
+								});
+								result.push({ name, share: shares });
+							});
+
+							// inserting members into the result array who have still not contributed
+							let updatedResult = [...result];
+
+							gd.groupMembers.forEach((member) => {
+								if (!result.find((x) => x.name === member)) {
+									updatedResult.push({ name: member, share: 0 });
+								}
+							});
+							gd.finalContributions = updatedResult;
 							res.json({
 								message: `updated contribution`,
 								updatedData: cd,
