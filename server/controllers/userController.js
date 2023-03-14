@@ -185,6 +185,7 @@ const updateUser = async (req, res) => {
 					msg: "Error uploading file",
 				});
 			}
+			console.log(req.file, "cloudinary result");
 
 			if (req.file) {
 				const result = await cloudinary.uploader.upload(req.file.path, {
@@ -192,7 +193,6 @@ const updateUser = async (req, res) => {
 					allowed_formats: ["png", "jpg", "jpeg"],
 					transformation: [{ width: 500, height: 500, crop: "limit" }],
 				});
-
 				user.profilePicture = {
 					public_id: result.public_id,
 					data: req.file.buffer,
@@ -200,7 +200,6 @@ const updateUser = async (req, res) => {
 					imageName: req.file.originalname,
 				};
 			}
-
 			user.firstName = req.body.firstName || user.firstName;
 			user.lastName = req.body.lastName || user.lastName;
 			user.phone = req.body.phone || user.phone;

@@ -70,6 +70,7 @@ const deleteTransaction = (req, res) => {
 						deletedId: td._id,
 						message: "transaction deleted",
 						savings: bd.savings,
+						total: bd.total,
 					});
 				})
 				.catch((err) => {
@@ -110,10 +111,18 @@ const editTransaction = (req, res) => {
 					bd.markModified("total");
 					bd.markModified("savings");
 					bd.save();
-					res.json({ message: "transaction updated" });
+					res.json({
+						message: "transaction updated",
+						newTransaction: td,
+						expenses: bd.expensesArray,
+						total: bd.total,
+						savings: bd.savings,
+					});
 				})
 				.catch((err) => {
-					res.json({ message: "no transaction found" });
+					res.json({
+						message: "no transaction found",
+					});
 				});
 		})
 		.catch((err) => {

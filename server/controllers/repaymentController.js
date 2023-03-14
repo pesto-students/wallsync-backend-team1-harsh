@@ -22,12 +22,16 @@ const addRepayment = (req, res) => {
 };
 
 const editRepayment = (req, res) => {
+	console.log(req.body, "bodyyy");
+	console.log("backend id", req.params.repaymentId);
+
 	User.findById(req.params.id)
 		.then((ud) => {
 			Repayment.findByIdAndUpdate(req.params.repaymentId, req.body, {
 				new: true,
 			})
 				.then((rd) => {
+					console.log(rd, "rddd");
 					res.json({ message: "repayment updated", update: rd });
 				})
 				.catch((err) => {

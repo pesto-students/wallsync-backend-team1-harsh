@@ -79,35 +79,53 @@ const editContribution = (req, res) => {
 		.then((ud) => {
 			Group.findOne({ groupName: req.params.groupName })
 				.then((gd) => {
-					Contribution.findByIdAndUpdate(req.params.contributionId, req.body, {
-						new: true,
-					})
+					Contribution.findByIdAndUpdate(
+						req.params.contributionId,
+						{
+							_id: req.body.id,
+							description: req.body.desc,
+							amount: req.body.share,
+							group: req.body.group,
+							contributedBy: req.body.name,
+						},
+						{
+							new: true,
+						}
+					)
 						.then((cd) => {
-							const index = gd.contributions.findIndex(
-								(item) => item.id.toString() === req.params.contributionId
-							);
-							if (index !== -1) {
-								gd.contributions[index] = {
-									id: cd._id,
-									name: cd.contributedBy,
-									desc: cd.description,
-									share: cd.amount,
-									group: groupName,
-								};
-							}
+							gd.contributions.map((i) => {
+								if (i.id == cd._id) {
+									i.name = cd.contributedBy;
+									// i.name = cd.name;
+
+									i.desc = cd.description;
+									// i.desc = cd.desc;
+
+									i.share = cd.amount;
+									i.group = cd.group;
+								}
+							});
+
 							let total = 0;
 							gd.contributions.map((i) => {
 								total += i.share;
 							});
+							console.log(total, "after106");
 							gd.groupTotal = total;
+							console.log("444", gd);
 							gd.markModified("groupTotal");
 							gd.markModified("contributions");
 
 							gd.save();
-							res.json({ message: `${cd}-updated contribution` });
+							res.json({
+								message: `updated contribution`,
+								updatedData: cd,
+								finalContributions: gd.finalContributions,
+							});
 						})
 						.catch((err) => {
-							res.json({ message: "error updating contribution" });
+							console.log(err);
+							res.json({ message: "error updating contribution", err });
 						});
 				})
 				.catch((err) => {
