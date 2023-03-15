@@ -8,6 +8,7 @@ const nodemailer = require("nodemailer");
 const upload = require("../config/upload");
 const cloudinary = require("cloudinary").v2;
 const Formidable = require("formidable");
+const multer = require("multer");
 
 const register = async (req, res) => {
 	try {
@@ -153,49 +154,67 @@ const updateUser = async (req, res) => {
 		res.status(500).json({ message: `Error: ${err}` });
 	}
 };
+// const updateProfilePicture = async (req, res) => {
+// 	try {
+// 		let user = await User.findById(req.params.id);
+
+// 		if (!user) {
+// 			return res.status(404).json({ msg: "User not found" });
+// 		}
+// 		console.log("path", req.file);
+// 		console.log("cloudinary req body", req.body);
+
+// 		if (req.file) {
+// 			const result = await cloudinary.uploader.upload(req.file.path, {
+// 				folder: "uploads",
+// 				allowed_formats: ["png", "jpg", "jpeg"],
+// 				transformation: [{ width: 500, height: 500, crop: "limit" }],
+// 			});
+// 			console.log("cloudinary req body", req.file.path);
+
+// 			user.profilePicture = {
+// 				public_id: result.public_id,
+// 				secure_url: result.secure_url,
+// 			};
+// 			console.log("cloudinary result", result.public_id);
+// 		}
+// 		const savedUser = await user.save();
+
+// 		const updatedUser = await User.findByIdAndUpdate(req.params.id, savedUser, {
+// 			new: true,
+// 		});
+// 		res.json({
+// 			msg: "User profile picture successfully updated",
+// 			updatedUser,
+// 		});
+// 	} catch (err) {
+// 		console.log(err);
+// 		res.status(500).json({ msg: "Server Error" });
+// 	}
+// };
+
 const updateProfilePicture = async (req, res) => {
+	console.log(req.body); // log the request body
 	try {
-		let user = await User.findById(req.params.id);
+		const user = await User.findByIdAndUpdate(
+			req.params.id,
+			{
+				profilePicture: {
+					public_id: req.file.filename,
+				},
+			},
+			{ new: true }
+		);
+		console.log("fileeeeeeeeee", req.file);
+		console.log("usrrr", user);
 
-		if (!user) {
-			return res.status(404).json({ msg: "User not found" });
-		}
-
-		if (req.file) {
-			console.log("cloudinary req body", req.file);
-			console.log("path", req.file.path);
-
-			const result = await cloudinary.uploader.upload(req.file.path, {
-				folder: "uploads",
-				allowed_formats: ["png", "jpg", "jpeg"],
-				transformation: [{ width: 500, height: 500, crop: "limit" }],
-			});
-			console.log("cloudinary req body", req.file.path);
-
-			user.profilePicture = {
-				public_id: result.public_id,
-				secure_url: result.secure_url,
-			};
-			console.log("cloudinary result", result.public_id);
-		}
-		const savedUser = await user.save();
-
-		const updatedUser = await User.findByIdAndUpdate(req.params.id, savedUser, {
-			new: true,
-		});
-		// const updatedUser = await User.findByIdAndUpdate(req.params.id, user, {
-		// 	new: true,
-		// });
-		res.json({
-			msg: "User profile picture successfully updated",
-			updatedUser,
-		});
-		// });
-	} catch (err) {
-		console.log(err);
-		res.status(500).json({ msg: "Server Error" });
+		res.status(200).json({ updatedUser: user });
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: "Error updating profile picture" });
 	}
 };
+
 const getUser = (req, res) => {
 	User.findById(req.params.id)
 		.then((data) => {

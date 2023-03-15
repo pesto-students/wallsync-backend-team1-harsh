@@ -11,6 +11,8 @@ const userSchema = new Schema(
 		profilePicture: {
 			public_id: { type: String },
 			secure_url: { type: String },
+			contentType: { type: String },
+			imageName: { type: String },
 		},
 		isAdmin: { type: Boolean, default: false },
 		password: { type: String, required: true },
