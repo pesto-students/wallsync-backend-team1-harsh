@@ -188,6 +188,7 @@ const updateUser = async (req, res) => {
 			console.log(req.file, "cloudinary result");
 
 			if (req.file) {
+				console.log(req.file, "cloudinary result 1");
 				const result = await cloudinary.uploader.upload(req.file.path, {
 					folder: "uploads",
 					allowed_formats: ["png", "jpg", "jpeg"],

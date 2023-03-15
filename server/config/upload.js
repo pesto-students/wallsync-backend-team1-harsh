@@ -6,8 +6,8 @@ const cloudinary = require("cloudinary").v2;
 // Configuration
 cloudinary.config({
 	cloud_name: "wallsync",
-	api_key: "734138985989871",
-	api_secret: "xppRkrFusRVzORS3QQ6zkiLWNBY",
+	api_key: process.env.CLOUDINARY_API_KEY,
+	api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const storage = new CloudinaryStorage({
