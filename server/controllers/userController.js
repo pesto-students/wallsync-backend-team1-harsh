@@ -7,48 +7,8 @@ const transporter = require("../config/mail");
 const nodemailer = require("nodemailer");
 const upload = require("../config/upload");
 const cloudinary = require("cloudinary").v2;
-// const register = async (req, res) => {
-// 	try {
-// 		const user = await User.findOne({ email: req.body.email });
-// 		if (user) {
-// 			return res.json({
-// 				msg: "User Already Exist",
-// 			});
-// 		}
+const Formidable = require("formidable");
 
-// 		const password = await bcrypt.hash(req.body.password, 10);
-// 		const userdata = await User.create({
-// 			firstName: req.body.firstName,
-// 			lastName: req.body.lastName,
-// 			phone: req.body.phone,
-// 			email: req.body.email,
-// 			zip: req.body.zip,
-// 			profilePicture: req.body.profilePicture,
-// 			password,
-// 		});
-
-// 		res.json({
-// 			msg: "user is sucessfully registered",
-// 			userdata,
-// 		});
-// 		const options = {
-// 			from: "wallsyncapp@gmail.com",
-// 			to: `${req.body.email}`,
-// 			subject: "Wallsync Account created",
-// 			text: "WELCOME, Your Wallsync Account has been created",
-// 		};
-// 		transporter.sendMail(options, function (err, info) {
-// 			if (err) {
-// 				console.log(err);
-// 				return;
-// 			}
-// 			console.log("Sent: " + info.response);
-// 		});
-// 	} catch (err) {
-// 		console.log(err);
-// 	}
-// };
-//
 const register = async (req, res) => {
 	try {
 		upload(req, res, async (err) => {
@@ -124,6 +84,7 @@ const login = async (req, res) => {
 						firstName: user.firstName,
 						lastName: user.lastName,
 						profilePicture: user.profilePicture,
+						isAdmin: user.isAdmin,
 						zip: user.zip,
 						phone: user.phone,
 					},
@@ -173,58 +134,68 @@ const getBudget = async (req, res) => {
 
 const updateUser = async (req, res) => {
 	try {
+		const user = await User.findById(req.params.id);
+		if (!user) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		user.firstName = req.body.firstName || user.firstName;
+		user.lastName = req.body.lastName || user.lastName;
+		user.phone = req.body.phone || user.phone;
+		user.email = req.body.email || user.email;
+		user.zip = req.body.zip || user.zip;
+		user.password = req.body.password
+			? await bcrypt.hash(req.body.password, 10)
+			: user.password;
+
+		const updatedUser = await user.save();
+		res.json({ message: "Updated user details", updatedUser });
+	} catch (err) {
+		res.status(500).json({ message: `Error: ${err}` });
+	}
+};
+const updateProfilePicture = async (req, res) => {
+	try {
 		let user = await User.findById(req.params.id);
 
 		if (!user) {
 			return res.status(404).json({ msg: "User not found" });
 		}
 
-		upload(req, res, async (err) => {
-			if (err) {
-				return res.status(400).json({
-					msg: "Error uploading file",
-				});
-			}
-			console.log(req.file, "cloudinary result");
+		if (req.file) {
+			console.log("cloudinary req body", req.file);
+			console.log("path", req.file.path);
 
-			if (req.file) {
-				console.log(req.file, "cloudinary result 1");
-				const result = await cloudinary.uploader.upload(req.file.path, {
-					folder: "uploads",
-					allowed_formats: ["png", "jpg", "jpeg"],
-					transformation: [{ width: 500, height: 500, crop: "limit" }],
-				});
-				user.profilePicture = {
-					public_id: result.public_id,
-					data: req.file.buffer,
-					contentType: req.file.mimetype,
-					imageName: req.file.originalname,
-				};
-			}
-			user.firstName = req.body.firstName || user.firstName;
-			user.lastName = req.body.lastName || user.lastName;
-			user.phone = req.body.phone || user.phone;
-			user.email = req.body.email || user.email;
-			user.zip = req.body.zip || user.zip;
-			user.password = req.body.password
-				? await bcrypt.hash(req.body.password, 10)
-				: user.password;
+			const result = await cloudinary.uploader.upload(req.file.path, {
+				folder: "uploads",
+				allowed_formats: ["png", "jpg", "jpeg"],
+				transformation: [{ width: 500, height: 500, crop: "limit" }],
+			});
+			console.log("cloudinary req body", req.file.path);
 
-			// const updatedUser = await user.save();
-			const updatedUser = await User.findByIdAndUpdate(req.params.id, user, {
-				new: true,
-			});
-			res.json({
-				msg: "User data successfully updated",
-				updatedUser,
-			});
+			user.profilePicture = {
+				public_id: result.public_id,
+				secure_url: result.secure_url,
+			};
+			console.log("cloudinary result", result.public_id);
+		}
+		const savedUser = await user.save();
+
+		const updatedUser = await User.findByIdAndUpdate(req.params.id, savedUser, {
+			new: true,
 		});
+		// const updatedUser = await User.findByIdAndUpdate(req.params.id, user, {
+		// 	new: true,
+		// });
+		res.json({
+			msg: "User profile picture successfully updated",
+			updatedUser,
+		});
+		// });
 	} catch (err) {
 		console.log(err);
 		res.status(500).json({ msg: "Server Error" });
 	}
 };
-
 const getUser = (req, res) => {
 	User.findById(req.params.id)
 		.then((data) => {
@@ -248,4 +219,5 @@ module.exports = {
 	getUser,
 	getUsers,
 	updateUser,
+	updateProfilePicture,
 };

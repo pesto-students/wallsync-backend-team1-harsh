@@ -10,9 +10,7 @@ const userSchema = new Schema(
 		zip: { type: Number, required: true },
 		profilePicture: {
 			public_id: { type: String },
-			data: { type: Buffer },
-			contentType: { type: String },
-			imageName: { type: String },
+			secure_url: { type: String },
 		},
 		isAdmin: { type: Boolean, default: false },
 		password: { type: String, required: true },
