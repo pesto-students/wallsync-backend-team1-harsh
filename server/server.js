@@ -10,7 +10,6 @@ const groupRoute = require("./routes/groupRoute");
 const contributionRoute = require("./routes/contributionRoute");
 const budgetRoute = require("./routes/budgetRoute");
 const repaymentRoute = require("./routes/repaymentRoute");
-const fileupload = require("express-fileupload");
 
 const app = express();
 const PORT = process.env.PORT || 8008;
@@ -23,7 +22,7 @@ app.use("/api", groupRoute);
 app.use("/api", contributionRoute);
 app.use("/api", budgetRoute);
 app.use("/api", repaymentRoute);
-app.use(fileupload({ useTempFiles: true }));
+
 app.listen(PORT, () => {
 	console.log("WallSync is running on port " + PORT);
 });
