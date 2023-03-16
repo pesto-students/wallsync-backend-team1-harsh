@@ -3,10 +3,11 @@ const userController = require("../controllers/userController");
 const router = express.Router();
 const multer = require("multer");
 const storage = multer.memoryStorage();
-router.post("/register", userController.register);
-router.post("/login", userController.login);
+
 const upload = require("../config/upload");
 
+router.post("/register", userController.register);
+router.post("/login", userController.login);
 router.get("/user/:id/groups", userController.getAllGroups);
 router.get("/user/:id/repayments", userController.getAllRepayments);
 router.get("/user/:id/budget", userController.getBudget);
