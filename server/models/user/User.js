@@ -9,6 +9,8 @@ const userSchema = new Schema(
 		email: { type: String, required: true, unique: true },
 		zip: { type: Number, required: true },
 		profilePicture: {
+			type: String,
+			default: "",
 			public_id: { type: String },
 			secure_url: { type: String },
 			contentType: { type: String },

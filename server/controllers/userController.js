@@ -11,64 +11,37 @@ const multer = require("multer");
 
 const register = async (req, res) => {
 	try {
-		upload(req, res, async (err) => {
-			if (err) {
-				return res.json({
-					msg: "Error uploading file",
-				});
-			}
+		const user = await User.findOne({ email: req.body.email });
+		if (user) {
+			return res.json({
+				msg: "User Already Exist",
+			});
+		}
+		if (!req.body.password) {
+			return res.json({
+				msg: "Password is required",
+			});
+		}
 
-			const user = await User.findOne({ email: req.body.email });
-			if (user) {
-				return res.json({
-					msg: "User Already Exist",
-				});
-			}
-			const result = await cloudinary.uploader.upload(req.file.path, {
-				folder: "uploads",
-				allowed_formats: ["png", "jpg", "jpeg"],
-				transformation: [{ width: 500, height: 500, crop: "limit" }],
-			});
-			const password = await bcrypt.hash(req.body.password, 10);
-			const userdata = await User.create({
-				firstName: req.body.firstName,
-				lastName: req.body.lastName,
-				phone: req.body.phone,
-				email: req.body.email,
-				zip: req.body.zip,
-				profilePicture: {
-					public_id: result.public_id,
-					data: req.file.buffer,
-					contentType: req.file.mimetype,
-					imageName: req.file.originalname,
-				},
-				password,
-			});
+		const password = await bcrypt.hash(req.body.password.toString(), 10);
+		const userdata = await User.create({
+			firstName: req.body.firstName,
+			lastName: req.body.lastName,
+			phone: req.body.phone,
+			email: req.body.email,
+			zip: req.body.zip,
+			profilePicture: req.body.profilePicture,
+			password,
+		});
 
-			res.json({
-				msg: "user is sucessfully registered",
-				userdata,
-			});
-
-			const options = {
-				from: "wallsyncapp@gmail.com",
-				to: `${req.body.email}`,
-				subject: "Wallsync Account created",
-				text: "WELCOME, Your Wallsync Account has been created",
-			};
-			transporter.sendMail(options, function (err, info) {
-				if (err) {
-					console.log(err);
-					return;
-				}
-				console.log("Sent: " + info.response);
-			});
+		res.json({
+			msg: "user is sucessfully registered",
+			userdata,
 		});
 	} catch (err) {
 		console.log(err);
 	}
 };
-
 const login = async (req, res) => {
 	const { email, password } = req.body;
 	try {
@@ -166,8 +139,6 @@ const updateProfilePicture = async (req, res) => {
 			},
 			{ new: true }
 		);
-		console.log("fileeeeeeeeee", req.file);
-		console.log("usrrr", user);
 
 		res.status(200).json({ updatedUser: user });
 	} catch (error) {
@@ -175,20 +146,82 @@ const updateProfilePicture = async (req, res) => {
 		res.status(500).json({ message: "Error updating profile picture" });
 	}
 };
-
+//admin
 const getUser = (req, res) => {
 	User.findById(req.params.id)
-		.then((data) => {
-			res.json(data);
+		.then((ud) => {
+			if (ud.isAdmin) {
+				User.find()
+					.then((data) => {
+						res.json({ users: data });
+					})
+					.catch((err) => {
+						res.json({ message: "no users found" });
+					});
+			} else {
+				res.json("You are not an admin");
+			}
 		})
 		.catch((err) => {
 			res.json(err);
 		});
 };
-const getUsers = (req, res) => {
-	User.find().then((data) => {
-		res.json(data);
-	});
+const getGroup = (req, res) => {
+	User.findById(req.params.id)
+		.then((ud) => {
+			if (ud.isAdmin) {
+				Group.find()
+					.then((data) => {
+						res.json({ groups: data });
+					})
+					.catch((err) => {
+						res.json({ message: "no groups found" });
+					});
+			} else {
+				res.json("You are not an admin");
+			}
+		})
+		.catch((err) => {
+			res.json(err);
+		});
+};
+const deleteUser = (req, res) => {
+	User.findById(req.params.id)
+		.then((ud) => {
+			if (ud.isAdmin) {
+				User.findOneAndDelete({ email: req.params.email })
+					.then((data) => {
+						res.json({ deletedUser: data });
+					})
+					.catch((err) => {
+						res.json({ message: "user not deleted" });
+					});
+			} else {
+				res.json("You are not an admin");
+			}
+		})
+		.catch((err) => {
+			res.json(err);
+		});
+};
+const deleteGroup = (req, res) => {
+	User.findById(req.params.id)
+		.then((ud) => {
+			if (ud.isAdmin) {
+				Group.findOneAndDelete({ groupName: req.params.groupName })
+					.then((data) => {
+						res.json({ deletedGroup: data });
+					})
+					.catch((err) => {
+						res.json({ message: "user not deleted" });
+					});
+			} else {
+				res.json("You are not an admin");
+			}
+		})
+		.catch((err) => {
+			res.json(err);
+		});
 };
 module.exports = {
 	register,
@@ -197,7 +230,9 @@ module.exports = {
 	getAllRepayments,
 	getBudget,
 	getUser,
-	getUsers,
+	getGroup,
 	updateUser,
 	updateProfilePicture,
+	deleteUser,
+	deleteGroup,
 };
