@@ -223,6 +223,48 @@ const deleteGroup = (req, res) => {
 			res.json(err);
 		});
 };
+const adminEditUser = (req, res) => {
+	User.findById(req.params.id)
+		.then((ud) => {
+			if (ud.isAdmin) {
+				User.findOneAndUpdate({ email: req.params.email }, req.body, {
+					new: true,
+				})
+					.then((data) => {
+						res.json({ editedUser: data });
+					})
+					.catch((err) => {
+						res.json({ message: "user not edited" });
+					});
+			} else {
+				res.json("You are not an admin");
+			}
+		})
+		.catch((err) => {
+			res.json(err);
+		});
+};
+const adminEditGroup = (req, res) => {
+	User.findById(req.params.id)
+		.then((ud) => {
+			if (ud.isAdmin) {
+				Group.findOneAndUpdate({ groupName: req.params.groupName }, req.body, {
+					new: true,
+				})
+					.then((data) => {
+						res.json({ editedGroup: data });
+					})
+					.catch((err) => {
+						res.json({ message: "group not edited" });
+					});
+			} else {
+				res.json("You are not an admin");
+			}
+		})
+		.catch((err) => {
+			res.json(err);
+		});
+};
 module.exports = {
 	register,
 	login,
@@ -235,4 +277,6 @@ module.exports = {
 	updateProfilePicture,
 	deleteUser,
 	deleteGroup,
+	adminEditUser,
+	adminEditGroup,
 };
