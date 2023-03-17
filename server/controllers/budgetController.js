@@ -4,18 +4,45 @@ const User = require("../models/user/User");
 
 // add a budget to start managing expenses
 const addBudget = (req, res) => {
-	User.findById(req.params.id).then((ud) => {
-		const budget = new Budget({
-			user: req.params.id,
-			income: req.body.income,
-			limit: req.body.limit,
+	User.findById(req.params.id)
+		.then((ud) => {
+			const budget = new Budget({
+				user: req.params.id,
+				income: req.body.income,
+				limit: req.body.limit,
+			});
+			budget
+				.save()
+				.then((bd) => {
+					ud.budgets.push(bd);
+					ud.save();
+					res.json(bd);
+				})
+				.catch((err) => {
+					res.json("couldn't create budget");
+				});
+		})
+		.catch((err) => {
+			res.json("user not found");
 		});
-		budget.save().then((bd) => {
-			ud.budgets.push(bd);
-			ud.save();
-			res.json(bd);
+};
+
+const editBudget = (req, res) => {
+	Budget.findByIdAndUpdate(req.params.id, req.body, { new: true })
+		.then((bd) => {
+			let total = 0;
+			bd.expensesArray.map((i) => {
+				total += i.amount;
+			});
+			bd.total = total;
+			let savings = bd.income - bd.total;
+			bd.savings = savings;
+			bd.save();
+			res.json({ updatedBudgetData: bd, total: bd.total, savings: bd.savings });
+		})
+		.catch((err) => {
+			res.json("couldn't create budget");
 		});
-	});
 };
 
 //add a transaction to the newly created budget
@@ -158,6 +185,7 @@ const filterTransaction = (req, res) => {
 
 module.exports = {
 	addBudget,
+	editBudget,
 	addTransaction,
 	filterTransaction,
 	deleteTransaction,

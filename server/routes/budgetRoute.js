@@ -3,6 +3,7 @@ const router = express.Router();
 const budgetController = require("../controllers/budgetController");
 
 router.post("/budget/:id/addBudget", budgetController.addBudget);
+router.put("/budget/:id/editBudget", budgetController.editBudget);
 router.post("/budget/:user/addExpense", budgetController.addTransaction);
 router.delete(
 	"/budget/:user/:expenseId/deleteExpense",
