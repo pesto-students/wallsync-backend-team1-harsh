@@ -2,9 +2,9 @@ const Group = require("../models/billSplit/Group");
 const Contribution = require("../models/billSplit/Contribution");
 const User = require("../models/user/User");
 
+//add a contribution to the activity/group
 const addContribution = (req, res) => {
 	User.findById(req.params.id)
-
 		.then((ud) => {
 			Group.findOne({ groupName: req.params.groupName })
 				.then((gd) => {
@@ -74,6 +74,7 @@ const addContribution = (req, res) => {
 		});
 };
 
+//edit a contribution to the activity/group
 const editContribution = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -156,6 +157,7 @@ const editContribution = (req, res) => {
 		});
 };
 
+//delete a contribution to the activity/group
 const deleteContribution = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {

@@ -1,14 +1,10 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Group = require("../models/billSplit/Group");
-const Contribution = require("../models/billSplit/Contribution");
 const User = require("../models/user/User");
 const transporter = require("../config/mail");
-const nodemailer = require("nodemailer");
-const upload = require("../config/upload");
-const cloudinary = require("cloudinary").v2;
-const multer = require("multer");
 
+//register a user/admin
 const register = async (req, res) => {
 	try {
 		const user = await User.findOne({ email: req.body.email });
@@ -38,10 +34,25 @@ const register = async (req, res) => {
 			msg: "user is sucessfully registered",
 			userdata,
 		});
+		const options = {
+			from: "wallsyncapp@gmail.com",
+			to: `${req.body.email}`,
+			subject: "Wallsync Account created",
+			text: "WELCOME, Your Wallsync Account has been created",
+		};
+		transporter.sendMail(options, function (err, info) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			console.log("Sent: " + info.response);
+		});
 	} catch (err) {
 		console.log(err);
 	}
 };
+
+//login for user/admin
 const login = async (req, res) => {
 	const { email, password } = req.body;
 	try {
@@ -77,6 +88,7 @@ const login = async (req, res) => {
 	}
 };
 
+//get all groups of a user
 const getAllGroups = async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id).populate("groups");
@@ -86,6 +98,8 @@ const getAllGroups = async (req, res) => {
 		res.json("error fetching groups");
 	}
 };
+
+//get all repayments of a user
 const getAllRepayments = async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id).populate("repayments");
@@ -95,6 +109,8 @@ const getAllRepayments = async (req, res) => {
 		res.json("error fetching repayments");
 	}
 };
+
+//get budget of a user
 const getBudget = async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id).populate("budgets");
@@ -105,6 +121,7 @@ const getBudget = async (req, res) => {
 	}
 };
 
+//update a user
 const updateUser = async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id);
@@ -127,8 +144,8 @@ const updateUser = async (req, res) => {
 	}
 };
 
+//update profile picture
 const updateProfilePicture = async (req, res) => {
-	console.log(req.body); // log the request body
 	try {
 		const user = await User.findByIdAndUpdate(
 			req.params.id,
@@ -146,7 +163,10 @@ const updateProfilePicture = async (req, res) => {
 		res.status(500).json({ message: "Error updating profile picture" });
 	}
 };
+
 //admin
+
+//admin gets users
 const getUser = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -166,6 +186,8 @@ const getUser = (req, res) => {
 			res.json(err);
 		});
 };
+
+//admin gets groups
 const getGroup = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -185,6 +207,8 @@ const getGroup = (req, res) => {
 			res.json(err);
 		});
 };
+
+//admin deletes user
 const deleteUser = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -204,6 +228,8 @@ const deleteUser = (req, res) => {
 			res.json(err);
 		});
 };
+
+//admin deletes group
 const deleteGroup = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -223,6 +249,8 @@ const deleteGroup = (req, res) => {
 			res.json(err);
 		});
 };
+
+//admin edits user
 const adminEditUser = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -244,6 +272,8 @@ const adminEditUser = (req, res) => {
 			res.json(err);
 		});
 };
+
+//admin edits group
 const adminEditGroup = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {

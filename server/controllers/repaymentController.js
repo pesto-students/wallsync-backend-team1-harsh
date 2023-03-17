@@ -1,6 +1,7 @@
 const User = require("../models/user/User");
 const Repayment = require("../models/repayments/Repayment");
 
+//add a repayment
 const addRepayment = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -21,6 +22,7 @@ const addRepayment = (req, res) => {
 		});
 };
 
+//edit a repayment
 const editRepayment = (req, res) => {
 	console.log(req.body, "bodyyy");
 	console.log("backend id", req.params.repaymentId);
@@ -43,6 +45,7 @@ const editRepayment = (req, res) => {
 		});
 };
 
+//delete a repayment
 const deleteRepayment = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {

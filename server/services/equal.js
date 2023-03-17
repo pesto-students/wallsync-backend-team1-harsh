@@ -1,3 +1,4 @@
+//equal split among members
 function equalSplit(members) {
 	let result = [];
 	let total = 0;

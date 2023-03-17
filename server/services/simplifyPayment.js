@@ -1,3 +1,4 @@
+//simplifies group payments for settlement
 function simplifyPayment(ow, ts) {
 	let result = [];
 	let simplify = [];

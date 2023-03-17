@@ -2,6 +2,7 @@ const Transaction = require("../models/expenseManager/Transaction");
 const Budget = require("../models/expenseManager/Budget");
 const User = require("../models/user/User");
 
+// add a budget to start managing expenses
 const addBudget = (req, res) => {
 	User.findById(req.params.id).then((ud) => {
 		const budget = new Budget({
@@ -17,6 +18,7 @@ const addBudget = (req, res) => {
 	});
 };
 
+//add a transaction to the newly created budget
 const addTransaction = (req, res) => {
 	Budget.findOne({ user: req.params.user }).then((bd) => {
 		const newExpense = new Transaction({
@@ -45,6 +47,7 @@ const addTransaction = (req, res) => {
 	});
 };
 
+//delete a transaction from the created budget
 const deleteTransaction = (req, res) => {
 	Budget.findOne({ user: req.params.user })
 		.then((bd) => {
@@ -82,6 +85,7 @@ const deleteTransaction = (req, res) => {
 		});
 };
 
+//edit a transaction from the budget
 const editTransaction = (req, res) => {
 	Budget.findOne({ user: req.params.user })
 		.then((bd) => {
@@ -129,6 +133,8 @@ const editTransaction = (req, res) => {
 			res.json({ message: "no budget found" });
 		});
 };
+
+//filter
 const filterTransaction = (req, res) => {
 	Budget.findById(req.params.budgetId)
 		.then((bd) => {
@@ -149,30 +155,6 @@ const filterTransaction = (req, res) => {
 			res.json({ message: "no budget found" });
 		});
 };
-
-// const filterTransaction = (req, res) => {
-// 	Budget.findById(req.params.budgetId)
-// 		.then((bd) => {
-// 			if (!bd) {
-// 				return res.json({ message: "no budget found" });
-// 			}
-// 			console.log(bd.monthly);
-// 			console.log(bd.expensesArray);
-// 			bd.expensesArray.forEach((expense) => {
-// 				const month = expense.date.slice(0, 7);
-// 				if (!bd.monthly[month]) {
-// 					bd.monthly[month] = [];
-// 				}
-// 				bd.monthly[month].push(expense);
-// 			});
-// 			console.log("here==============", bd.monthly);
-// 			bd.save();
-// 			res.json(bd.monthly);
-// 		})
-// 		.catch((err) => {
-// 			res.json({ message: "no budget found" });
-// 		});
-// };
 
 module.exports = {
 	addBudget,

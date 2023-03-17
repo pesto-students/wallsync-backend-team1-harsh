@@ -1,3 +1,4 @@
+//unequal split among group members
 function unequal(members, percentageArr) {
 	let result = [];
 	let total = 0;

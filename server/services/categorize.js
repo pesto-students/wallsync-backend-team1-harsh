@@ -1,3 +1,4 @@
+//categorizes member balances: settled and owed
 function categorize(arr) {
 	let settle = [];
 	let owed = [];

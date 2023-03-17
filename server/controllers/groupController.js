@@ -1,11 +1,11 @@
 const Group = require("../models/billSplit/Group");
-const Contribution = require("../models/billSplit/Contribution");
 const User = require("../models/user/User");
 const equalSplit = require("../services/equal");
 const unequal = require("../services/unequal");
 const categorize = require("../services/categorize");
 const simplifyPayment = require("../services/simplifyPayment");
 
+//create an activity/group
 const createGroup = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -31,6 +31,8 @@ const createGroup = (req, res) => {
 			res.json("error finding user");
 		});
 };
+
+//get group details
 const getGroup = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -47,6 +49,7 @@ const getGroup = (req, res) => {
 		});
 };
 
+//add a user/member to the activity/group
 const addUserToGroup = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -97,27 +100,7 @@ const addUserToGroup = (req, res) => {
 		});
 };
 
-// const addPercentageArray = (req, res) => {
-// 	User.findById(req.params.id)
-// 		.then((ud) => {
-// 			Group.findOne({ groupName: req.params.groupName })
-// 				.then((gd) => {
-// 					req.body.map((i) => {
-// 						gd.percentageArray.push({ name: i.name, percent: i.percent });
-// 					});
-// 					gd.save();
-// 					ud.save();
-
-// 					res.status(202).json(gd.percentageArray);
-// 				})
-// 				.catch((err) => {
-// 					res.json(err);
-// 				});
-// 		})
-// 		.catch((err) => {
-// 			res.json("error finding user");
-// 		});
-// };
+//add a percentage array to the activity/group for unequal splitting of bills
 const addPercentageArray = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -147,6 +130,7 @@ const addPercentageArray = (req, res) => {
 		});
 };
 
+//settle the group balance (equally/unequally)
 const settle = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -215,6 +199,8 @@ const settle = (req, res) => {
 			res.json("error finding user");
 		});
 };
+
+//delete an activity/group
 const deleteGroup = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {
@@ -231,6 +217,8 @@ const deleteGroup = (req, res) => {
 			res.json("error finding user");
 		});
 };
+
+//edit an activity/group
 const editGroup = (req, res) => {
 	User.findById(req.params.id)
 		.then((ud) => {

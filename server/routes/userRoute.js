@@ -3,8 +3,8 @@ const userController = require("../controllers/userController");
 const router = express.Router();
 const multer = require("multer");
 const storage = multer.memoryStorage();
-
 const upload = require("../config/upload");
+
 //user
 router.post("/register", userController.register);
 router.post("/login", userController.login);
