@@ -159,8 +159,7 @@ const updateProfilePicture = async (req, res) => {
 
 		res.status(200).json({ updatedUser: user });
 	} catch (error) {
-		console.log(error);
-		res.status(500).json({ message: "Error updating profile picture" });
+		res.status(500).json({ message: "Error updating profile picture", error });
 	}
 };
 

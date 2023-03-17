@@ -144,7 +144,6 @@ const editContribution = (req, res) => {
 							});
 						})
 						.catch((err) => {
-							console.log(err);
 							res.json({ message: "error updating contribution", err });
 						});
 				})
@@ -165,7 +164,6 @@ const deleteContribution = (req, res) => {
 				.then((gd) => {
 					Contribution.findByIdAndDelete(req.params.contributionId)
 						.then((cd) => {
-							console.log(req.params.contributionId);
 							gd.contributions = gd.contributions.filter(
 								(item) => item.id !== req.params.contributionId
 							);
