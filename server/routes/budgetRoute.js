@@ -4,13 +4,13 @@ const budgetController = require("../controllers/budgetController");
 
 router.post("/budget/:id/addBudget", budgetController.addBudget);
 router.put("/budget/:id/editBudget", budgetController.editBudget);
-router.post("/budget/:user/addExpense", budgetController.addTransaction);
+router.post("/budget/:id/addExpense", budgetController.addTransaction);
 router.delete(
-	"/budget/:user/:expenseId/deleteExpense",
+	"/budget/:id/:expenseId/deleteExpense",
 	budgetController.deleteTransaction
 );
 router.put(
-	"/budget/:user/:expenseId/editExpense",
+	"/budget/:id/:expenseId/editExpense",
 	budgetController.editTransaction
 );
 router.get("/budget/:budgetId/filter", budgetController.filterTransaction);

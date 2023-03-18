@@ -47,7 +47,8 @@ const editBudget = (req, res) => {
 
 //add a transaction to the newly created budget
 const addTransaction = (req, res) => {
-	Budget.findOne({ user: req.params.user }).then((bd) => {
+	// Budget.findOne({ user: req.params.user }).then((bd) => {
+	Budget.findById(req.params.id).then((bd) => {
 		const newExpense = new Transaction({
 			description: req.body.description,
 			amount: req.body.amount,
@@ -76,7 +77,7 @@ const addTransaction = (req, res) => {
 
 //delete a transaction from the created budget
 const deleteTransaction = (req, res) => {
-	Budget.findOne({ user: req.params.user })
+	Budget.findById(req.params.id)
 		.then((bd) => {
 			Transaction.findByIdAndDelete(req.params.expenseId)
 				.then((td) => {
@@ -114,7 +115,7 @@ const deleteTransaction = (req, res) => {
 
 //edit a transaction from the budget
 const editTransaction = (req, res) => {
-	Budget.findOne({ user: req.params.user })
+	Budget.findById(req.params.id)
 		.then((bd) => {
 			Transaction.findByIdAndUpdate(req.params.expenseId, req.body, {
 				new: true,
