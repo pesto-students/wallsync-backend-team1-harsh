@@ -14,7 +14,7 @@
 
 ## DEMO
 
-[WallSync Demo](https://github.com/)
+[WallSync Demo](https://wallsyncapp.netlify.app/)
 
 Test credentials
 | Email | Password |
