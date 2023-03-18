@@ -22,7 +22,13 @@ app.use("/api", groupRoute);
 app.use("/api", contributionRoute);
 app.use("/api", budgetRoute);
 app.use("/api", repaymentRoute);
-
+app.get(
+	"/",
+	(req,
+	(res) => {
+		res.json("wallsync running");
+	})
+);
 app.listen(PORT, () => {
 	console.log("WallSync is running on port " + PORT);
 });
