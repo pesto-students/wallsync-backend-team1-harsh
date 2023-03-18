@@ -28,13 +28,9 @@ app.get("/api", (req, res) => {
 	res.setHeader("Cache-Control", "s-max-age=1, stale-while-revalidate");
 	res.end(`Hello! Go to item: <a href="${path}">${path}</a>`);
 });
-app.get(
-	"/",
-	(req,
-	(res) => {
-		res.json("wallsync running");
-	})
-);
+app.get("/", (req, res) => {
+	res.json("app running");
+});
 app.listen(PORT, () => {
 	console.log("WallSync is running on port " + PORT);
 });
