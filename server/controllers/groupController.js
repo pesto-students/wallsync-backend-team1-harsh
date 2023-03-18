@@ -61,6 +61,9 @@ const addUserToGroup = (req, res) => {
 								if (gd.groupMembers.includes(user.firstName)) {
 									res.json("user already exists");
 								} else {
+									console.log(user, "userrrrrdata");
+									user.groups.push(gd._id);
+									user.save();
 									gd.groupMembers.push(user.firstName);
 									gd.save();
 									res.status(202).json({
