@@ -1,4 +1,4 @@
-![alt text](../server/public/assets/logoWallSync.png)
+![alt text](./server//public/assets/logoWallSync.png)
 
 # **WallSync**
 
