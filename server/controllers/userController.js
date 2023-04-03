@@ -81,7 +81,7 @@ const login = async (req, res) => {
 				res.json("password does not match");
 			}
 		} else {
-			res.json("User does not exist");
+			res.json(null);
 		}
 	} catch (err) {
 		console.log(err);
